@@ -30,5 +30,5 @@ enum update_status
 #define WIN_FULLSCREEN_DESKTOP false
 #define VSYNC true
 #define TITLE "2D Physics Playground"
-#define METERS_TO_PIXELS(a)  a*0.1
-#define PIXELS_TO_METERS(a)  a*10
+#define METERS_TO_PIXELS(a)  a*10
+#define PIXELS_TO_METERS(a)  a*0.1

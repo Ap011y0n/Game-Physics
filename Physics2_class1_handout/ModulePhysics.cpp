@@ -28,7 +28,7 @@ ModulePhysics::~ModulePhysics()
 bool ModulePhysics::Start()
 {
 	LOG("Creating Physics 2D environment");
-	b2Vec2 gravity(0.0f, -10.0f);
+	b2Vec2 gravity(0.0f, PIXELS_TO_METERS(10));
 	world = new b2World(gravity);
 	// TODO 2: Create a private variable for the world
 	// - You need to send it a default gravity
@@ -37,11 +37,19 @@ bool ModulePhysics::Start()
 	
 	
 	// TODO 4: Create a a big static circle as "ground"
-	b2BodyDef bodyDef;
-	bodyDef.position.Set(0.0f, 4.0f);
+
+	b2BodyDef bodyDef;	
+	bodyDef.type = b2_staticBody;
+	bodyDef.position.Set(PIXELS_TO_METERS(500), PIXELS_TO_METERS(400));
 	b2Body* body = world->CreateBody(&bodyDef);
 	b2CircleShape bigStaticCircle;
-	bigStaticCircle.m_radius = PIXELS_TO_METERS(60);
+	//bigStaticCircle.m_p.Set(PIXELS_TO_METERS(500), PIXELS_TO_METERS(400));
+	bigStaticCircle.m_radius = PIXELS_TO_METERS(270);
+	b2FixtureDef fixtureDef;
+	fixtureDef.shape = &bigStaticCircle;
+	fixtureDef.density = 1.0f;
+	fixtureDef.friction = 0.3f;	body->CreateFixture(&fixtureDef);
+
 	return true;
 }
 
@@ -49,9 +57,10 @@ bool ModulePhysics::Start()
 update_status ModulePhysics::PreUpdate()
 {
 	// TODO 3: Update the simulation ("step" the world)
-	float32 timeStep = 1.0f / 60.0f;		for (int32 i = 0; i < 60; ++i)
+	float32 timeStep = 1.0f / 60.0f;		for (int32 i = 0; i < 10; ++i)
 	{
 		world->Step(timeStep, 8, 3);
+		
 	}
 
 	return UPDATE_CONTINUE;
@@ -62,7 +71,20 @@ update_status ModulePhysics::PostUpdate()
 {
 	// TODO 5: On space bar press, create a circle on mouse position
 	// - You need to transform the position / radius
-
+	if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN) {
+		b2BodyDef bodyDef;
+		bodyDef.type = b2_dynamicBody;
+		bodyDef.position.Set(PIXELS_TO_METERS(App->input->GetMouseX()), PIXELS_TO_METERS(App->input->GetMouseY()));
+		b2Body* body = world->CreateBody(&bodyDef);
+		b2CircleShape circle;
+		//circle.m_p.Set(2.0f, 3.0f);
+		circle.m_radius = PIXELS_TO_METERS(25);
+		b2FixtureDef fixtureDef;
+		fixtureDef.shape = &circle;
+		fixtureDef.density = 1.0f;
+		fixtureDef.friction = 0.3f;
+		body->CreateFixture(&fixtureDef);
+	}
 	if(App->input->GetKey(SDL_SCANCODE_F1) == KEY_DOWN)
 		debug = !debug;
 
