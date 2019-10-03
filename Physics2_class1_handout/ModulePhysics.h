@@ -17,5 +17,6 @@ public:
 	
 private:
 	b2World* world = nullptr;
+
 	bool debug;
 };

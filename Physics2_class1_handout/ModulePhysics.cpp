@@ -28,7 +28,7 @@ ModulePhysics::~ModulePhysics()
 bool ModulePhysics::Start()
 {
 	LOG("Creating Physics 2D environment");
-	b2Vec2 gravity(0.0f, PIXELS_TO_METERS(10));
+	b2Vec2 gravity(0.0f, PIXELS_TO_METERS(2));
 	world = new b2World(gravity);
 	// TODO 2: Create a private variable for the world
 	// - You need to send it a default gravity
@@ -43,13 +43,21 @@ bool ModulePhysics::Start()
 	bodyDef.position.Set(PIXELS_TO_METERS(500), PIXELS_TO_METERS(400));
 	b2Body* body = world->CreateBody(&bodyDef);
 	b2CircleShape bigStaticCircle;
-	//bigStaticCircle.m_p.Set(PIXELS_TO_METERS(500), PIXELS_TO_METERS(400));
 	bigStaticCircle.m_radius = PIXELS_TO_METERS(270);
 	b2FixtureDef fixtureDef;
 	fixtureDef.shape = &bigStaticCircle;
 	fixtureDef.density = 1.0f;
 	fixtureDef.friction = 0.3f;	body->CreateFixture(&fixtureDef);
 
+	b2BodyDef groundBodyDef;
+	groundBodyDef.type = b2_staticBody;
+	groundBodyDef.position.Set(PIXELS_TO_METERS(0), PIXELS_TO_METERS(SCREEN_HEIGHT));	b2Body* groundBody = world->CreateBody(&groundBodyDef);	b2PolygonShape groundBox;
+	groundBox.SetAsBox(PIXELS_TO_METERS(1000), PIXELS_TO_METERS(100));
+	b2FixtureDef fixtureDef2;
+	fixtureDef2.shape = &groundBox;
+	fixtureDef2.density = 1.0f;
+	fixtureDef2.friction = 0.3f;
+	groundBody->CreateFixture(&fixtureDef2);
 	return true;
 }
 
@@ -57,7 +65,7 @@ bool ModulePhysics::Start()
 update_status ModulePhysics::PreUpdate()
 {
 	// TODO 3: Update the simulation ("step" the world)
-	float32 timeStep = 1.0f / 60.0f;		for (int32 i = 0; i < 10; ++i)
+	float32 timeStep = 1.0f / 60.0f;		for (int32 i = 0; i < 60; ++i)
 	{
 		world->Step(timeStep, 8, 3);
 		
@@ -77,12 +85,11 @@ update_status ModulePhysics::PostUpdate()
 		bodyDef.position.Set(PIXELS_TO_METERS(App->input->GetMouseX()), PIXELS_TO_METERS(App->input->GetMouseY()));
 		b2Body* body = world->CreateBody(&bodyDef);
 		b2CircleShape circle;
-		//circle.m_p.Set(2.0f, 3.0f);
-		circle.m_radius = PIXELS_TO_METERS(25);
+		circle.m_radius = PIXELS_TO_METERS(rand()%100);
 		b2FixtureDef fixtureDef;
 		fixtureDef.shape = &circle;
 		fixtureDef.density = 1.0f;
-		fixtureDef.friction = 0.3f;
+		fixtureDef.friction = 0.9f;
 		body->CreateFixture(&fixtureDef);
 	}
 	if(App->input->GetKey(SDL_SCANCODE_F1) == KEY_DOWN)
@@ -107,7 +114,19 @@ update_status ModulePhysics::PostUpdate()
 					App->renderer->DrawCircle(METERS_TO_PIXELS(pos.x), METERS_TO_PIXELS(pos.y), METERS_TO_PIXELS(shape->m_radius), 255, 255, 255);
 				}
 				break;
+				case b2Shape::e_polygon:
+				{
+					b2PolygonShape* shape = (b2PolygonShape*)f->GetShape();
+					b2Vec2 pos = f->GetBody()->GetPosition();
+					SDL_Rect rect;
+						rect.x = METERS_TO_PIXELS(pos.x);
+						rect.y = METERS_TO_PIXELS(pos.y);
+						rect.w = METERS_TO_PIXELS(1000);
+						rect.h = -METERS_TO_PIXELS(10);
 
+					App->renderer->DrawQuad(rect, 255, 255, 255, 255, false);
+				}
+				break;
 				// You will have to add more cases to draw boxes, edges, and polygons ...
 			}
 		}
