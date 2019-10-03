@@ -47,17 +47,21 @@ bool ModulePhysics::Start()
 	b2FixtureDef fixtureDef;
 	fixtureDef.shape = &bigStaticCircle;
 	fixtureDef.density = 1.0f;
-	fixtureDef.friction = 0.3f;	body->CreateFixture(&fixtureDef);
+	fixtureDef.friction = 0.3f;
+	body->CreateFixture(&fixtureDef);
 
 	b2BodyDef groundBodyDef;
 	groundBodyDef.type = b2_staticBody;
-	groundBodyDef.position.Set(PIXELS_TO_METERS(0), PIXELS_TO_METERS(SCREEN_HEIGHT));	b2Body* groundBody = world->CreateBody(&groundBodyDef);	b2PolygonShape groundBox;
+	groundBodyDef.position.Set(PIXELS_TO_METERS(0), PIXELS_TO_METERS(SCREEN_HEIGHT));
+	b2Body* groundBody = world->CreateBody(&groundBodyDef);
+	b2PolygonShape groundBox;
 	groundBox.SetAsBox(PIXELS_TO_METERS(1000), PIXELS_TO_METERS(100));
 	b2FixtureDef fixtureDef2;
 	fixtureDef2.shape = &groundBox;
 	fixtureDef2.density = 1.0f;
 	fixtureDef2.friction = 0.3f;
-	groundBody->CreateFixture(&fixtureDef2);
+	groundBody->CreateFixture(&fixtureDef2);
+
 	return true;
 }
 
@@ -65,7 +69,9 @@ bool ModulePhysics::Start()
 update_status ModulePhysics::PreUpdate()
 {
 	// TODO 3: Update the simulation ("step" the world)
-	float32 timeStep = 1.0f / 60.0f;		for (int32 i = 0; i < 60; ++i)
+	float32 timeStep = 1.0f / 60.0f;
+	
+	for (int32 i = 0; i < 60; ++i)
 	{
 		world->Step(timeStep, 8, 3);
 		
@@ -90,7 +96,8 @@ update_status ModulePhysics::PostUpdate()
 		fixtureDef.shape = &circle;
 		fixtureDef.density = 1.0f;
 		fixtureDef.friction = 0.9f;
-		body->CreateFixture(&fixtureDef);
+		body->CreateFixture(&fixtureDef);
+
 	}
 	if(App->input->GetKey(SDL_SCANCODE_F1) == KEY_DOWN)
 		debug = !debug;
