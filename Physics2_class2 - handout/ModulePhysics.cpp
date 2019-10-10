@@ -170,11 +170,14 @@ circleClass* ModulePhysics::CreateCircle(float x, float y, float r) {
 	fixture.shape = &shape;
 	b->CreateFixture(&fixture);
 
-	circleClass* circle;
+	circleClass *circle;
+	circle = new circleClass;
 	circle->b = b;
+	circle->radius = METERS_TO_PIXELS(radius);
+	
 	return circle;
 }
-void ModulePhysics::CreateRectangle(float x, float y, float w, float h) {
+boxClass* ModulePhysics::CreateRectangle(float x, float y, float w, float h) {
 	b2BodyDef body;
 	body.type = b2_dynamicBody;
 	body.position.Set(PIXEL_TO_METERS(x), PIXEL_TO_METERS(y));
@@ -187,58 +190,28 @@ void ModulePhysics::CreateRectangle(float x, float y, float w, float h) {
 	fixture.shape = &shape;
 	fixture.density = 1.0;
 	b->CreateFixture(&fixture);
+
+	boxClass *box;
+	box = new boxClass;
+	box->b = b;
+	box->w = w;
+	box->h = h;
+
+	return box;
 }
-void ModulePhysics::CreateChain(float x, float y) {
-	int rick_head[70] = {
-	42, 0,
-	75, 33,
-	88, 5,
-	94, 24,
-	94, 40,
-	112, 36,
-	103, 58,
-	106, 62,
-	116, 66,
-	108, 75,
-	110, 82,
-	105, 92,
-	109, 99,
-	102, 105,
-	99, 115,
-	106, 122,
-	103, 126,
-	98, 126,
-	95, 135,
-	88, 147,
-	71, 149,
-	56, 144,
-	46, 132,
-	35, 136,
-	41, 126,
-	25, 125,
-	33, 115,
-	11, 103,
-	29, 91,
-	1, 77,
-	17, 68,
-	30, 63,
-	13, 35,
-	42, 39,
-	43, 18
-	};
+chainClass* ModulePhysics::CreateChain(float x, float y, int* vects) {
+	
 		b2BodyDef body;
 		body.type = b2_dynamicBody;
 		body.position.Set(PIXEL_TO_METERS(x), PIXEL_TO_METERS(y));
 
 		b2Body* b = world->CreateBody(&body);
-
-		LOG("%d", b->GetPosition());
 		b2Vec2 chainvec[35]; 
 		int j = 0;
 		for (int i = 0; i < 35; i++) {
-			chainvec[i].Set(PIXEL_TO_METERS(rick_head[j]), PIXEL_TO_METERS(rick_head[j+1]));
+			chainvec[i].Set(PIXEL_TO_METERS(vects[j]), PIXEL_TO_METERS(vects[j+1]));
 			j+=2;
-			LOG("%d", j);
+			
 		}
 		b2ChainShape shape;
 		shape.CreateChain(chainvec, 35);
@@ -247,10 +220,43 @@ void ModulePhysics::CreateChain(float x, float y) {
 		fixture.shape = &shape;
 		fixture.density = 1.0;
 		b->CreateFixture(&fixture);
+
+		chainClass *chain;
+		chain = new chainClass;
+		chain->b = b;
+		return chain;
 }
 void circleClass::ReturnPosition() {
 	b2Vec2 ret;
-	ret = b->GetPosition();
-	x = ret.x;
-	y = ret.y;
+	ret = this->b->GetPosition();
+	x = METERS_TO_PIXELS(ret.x);
+	y = METERS_TO_PIXELS(ret.y);
+}
+double circleClass::GetRotation() {
+	
+	float ret;
+	ret = this->b->GetAngle()* RADTODEG;
+	
+	return ret;
+}
+
+void boxClass::ReturnPosition() {
+	b2Vec2 ret;
+	ret = this->b->GetPosition();
+	x = METERS_TO_PIXELS(ret.x);
+	y = METERS_TO_PIXELS(ret.y);
+}
+double boxClass::GetRotation() {
+
+	float ret;
+	ret = this->b->GetAngle()* RADTODEG;
+
+	return ret;
+}
+
+void chainClass::ReturnPosition() {
+	b2Vec2 ret;
+	ret = this->b->GetPosition();
+	x = METERS_TO_PIXELS(ret.x);
+	y = METERS_TO_PIXELS(ret.y);
 }

@@ -33,6 +33,16 @@ bool ModuleSceneIntro::Start()
 bool ModuleSceneIntro::CleanUp()
 {
 	LOG("Unloading Intro scene");
+	for (int j = 0; j < cNum; j++) {
+		delete Circle[j];
+	}
+	for (int j = 0; j < bNum; j++) {
+		delete Box[j];
+	}
+	for (int j = 0; j < chNum; j++) {
+		delete Chain[j];
+	}
+	
 
 	return true;
 }
@@ -45,15 +55,19 @@ update_status ModuleSceneIntro::Update()
 	// On space bar press, create a circle on mouse position
 	if (App->input->GetKey(SDL_SCANCODE_1) == KEY_DOWN)
 	{
-		b[1] = App->physics->CreateCircle(App->input->GetMouseX(), App->input->GetMouseY(), 25);
-
+		Circle[cNum] = App->physics->CreateCircle(App->input->GetMouseX(), App->input->GetMouseY(), 25);
+		if (cNum <MAX_CIRCLES){
+			cNum++;
+		}
 	}
 
 	if (App->input->GetKey(SDL_SCANCODE_2) == KEY_DOWN)
 	{
 		// TODO 1: When pressing 2, create a box on the mouse position
-		App->physics->CreateRectangle(App->input->GetMouseX(), App->input->GetMouseY(), 35, 10);
-
+		Box[bNum] = App->physics->CreateRectangle(App->input->GetMouseX(), App->input->GetMouseY(), 50, 25);
+		if (bNum < MAX_BOXES) {
+			bNum++;
+		}
 
 		// TODO 2: To have the box behave normally, set fixture's density to 1.0f
 	}
@@ -62,10 +76,25 @@ update_status ModuleSceneIntro::Update()
 	{
 		// TODO 3: Create a chain shape using those vertices
 		// remember to convert them from pixels to meters!
-		App->physics->CreateChain(App->input->GetMouseX(), App->input->GetMouseY());
-
+		Chain[chNum] = App->physics->CreateChain(App->input->GetMouseX(), App->input->GetMouseY(), rick_head);
+		if (chNum < MAX_CHAINS) {
+			chNum++;
+		}
 	}
 	// TODO 7: Draw all the circles using "circle" texture
+	for (int j = 0; j < cNum; j++) {
+		Circle[j]->ReturnPosition();
+		App->renderer->Blit(circle,Circle[j]->x-Circle[j]->radius, Circle[j]->y - Circle[j]->radius, NULL, NULL,Circle[j]->GetRotation());
+	}
 
+	for (int j = 0; j < bNum; j++) {
+		Box[j]->ReturnPosition();
+		App->renderer->Blit(box, Box[j]->x - Box[j]->w, Box[j]->y - Box[j]->h, NULL, NULL, Box[j]->GetRotation());
+	}
+
+	for (int j = 0; j < chNum; j++) {
+		Chain[j]->ReturnPosition();
+		App->renderer->Blit(rick, Chain[j]->x, Chain[j]->y);
+	}
 	return UPDATE_CONTINUE;
 }

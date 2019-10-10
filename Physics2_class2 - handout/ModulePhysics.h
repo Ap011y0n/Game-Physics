@@ -16,19 +16,37 @@ class b2World;
 class b2Body;
 class circleClass {
 public:
-	b2Body b;
+	b2Body *b;
 	int x = 0;
 	int y = 0;
-private:
+	float radius = 0;
 	void ReturnPosition();
+	double GetRotation();
+
+};
+class boxClass {
+public:
+	b2Body *b;
+	int x = 0;
+	int y = 0;
+	int w = 0;
+	int h = 0;
+	void ReturnPosition();
+	double GetRotation();
 
 };
 
+class chainClass {
+public:
+	b2Body *b;
+	int x = 0;
+	int y = 0;
+	void ReturnPosition();
+};
 // TODO 6: Create a small class that keeps a pointer to tghe b2Body
 // and has a method to request the position
 // then write the implementation in the .cpp
 // Then make your circle creation function to return a pointer to that class
-
 
 class ModulePhysics : public Module
 {
@@ -43,8 +61,8 @@ public:
 
 	// TODO 4: Move body creation to 3 functions to create circles, rectangles and chains
 	circleClass *CreateCircle(float x, float y, float r);
-	void CreateRectangle(float x, float y, float w, float h);
-	void CreateChain(float x, float y);
+	boxClass *CreateRectangle(float x, float y, float w, float h);
+	chainClass* CreateChain(float x, float y, int* vects);
 private:
 
 	bool debug;
