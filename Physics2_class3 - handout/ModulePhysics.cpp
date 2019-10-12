@@ -278,16 +278,30 @@ int PhysBody::RayCast(int x1, int y1, int x2, int y2, float& normal_x, float& no
 {
 	// TODO 2: Write code to test a ray cast between both points provided. If not hit return -1
 	// if hit, fill normal_x and normal_y and return the distance between x1,y1 and it's colliding point
-	b2RayCastInput input;	input.p1.Set(x1, y1);
+	b2FixtureDef fixture;	b2RayCastInput input;	input.p1.Set(x1, y1);
 	input.p2.Set(x2, y2);
-		b2RayCastOutput output;
-	b2Vec2 hitPoint = output.fraction * (input.p2 - input.p1);
+	int ret = -1;
+	b2RayCastOutput output;
+	int32 childIndex = 0;	bool hit = false;
+	b2Vec2 hitPoint;
+
+	for (b2Fixture* f = body->GetFixtureList(); f && !hit; f = f->GetNext())
+	{
+		fixture.shape = f->GetShape();
+		hit = fixture.shape->RayCast(&output, input, body->GetTransform(), childIndex);	
+	}
+	if (hit)
+	{
+		b2Vec2 hitPoint = output.fraction * (input.p2 - input.p1);
+		
+	}
+	
 	normal_x = METERS_TO_PIXELS(output.normal.x);
 	normal_y = METERS_TO_PIXELS(output.normal.y);
 	
-	LOG("%d", hitPoint.x, hitPoint.y);
+	LOG("%d", METERS_TO_PIXELS(hitPoint.x), METERS_TO_PIXELS(hitPoint.y));
 	
-	int ret = -1;
+	
 
 	return ret;
 }
