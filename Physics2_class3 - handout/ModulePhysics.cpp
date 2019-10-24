@@ -270,7 +270,7 @@ bool PhysBody::Contains(int x, int y) const
 			ret = fixture.shape->TestPoint(body->GetTransform(), vect);
 		}
 		
-
+		
 	return ret;
 }
 
